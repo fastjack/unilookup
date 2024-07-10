@@ -19,7 +19,7 @@ import os
 import sys
 from terminaltables import AsciiTable
 
-dir = os.path.dirname(os.path.realpath(__file__))
+directory = os.path.dirname(os.path.realpath(__file__))
 
 
 def main():
@@ -27,19 +27,19 @@ def main():
     for line in sys.stdin:
         chars = [ord(char) for char in line]
         output = {}
-        with open(os.path.join(dir, 'UnicodeData.txt'), encoding="utf-8") as data:
+        with open(
+            os.path.join(directory, "UnicodeData.txt"), encoding="utf-8"
+        ) as data:
             line = data.readline()
             while line != "":
-                info = line.rstrip(os.linesep).split(';')
+                info = line.rstrip(os.linesep).split(";")
 
                 if int(info[0], 16) in chars:
                     output[int(info[0], 16)] = info
 
                 line = data.readline()
 
-        table_data = [
-            ['character', 'byte', 'UTF-32', 'name', 'glyph']
-        ]
+        table_data = [["character", "byte", "UTF-32", "name", "glyph"]]
 
         byte = 0
         for point in chars:
@@ -67,7 +67,15 @@ def main():
             utf32 = hex(num)[2:].upper().zfill(8)
             glyph = chr(num)
 
-            table_data.append([ hex(point)[2:].upper().zfill(point_length*2), str(byte), utf32, name, glyph ])
+            table_data.append(
+                [
+                    hex(point)[2:].upper().zfill(point_length * 2),
+                    str(byte),
+                    utf32,
+                    name,
+                    glyph,
+                ]
+            )
 
             byte += point_length
 

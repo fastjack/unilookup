@@ -17,6 +17,7 @@
 
 import os
 import sys
+import unicodedata as ud
 from terminaltables import AsciiTable
 
 directory = os.path.dirname(os.path.realpath(__file__))
@@ -25,34 +26,13 @@ directory = os.path.dirname(os.path.realpath(__file__))
 def main():
     # Read input
     for line in sys.stdin:
-        chars = [ord(char) for char in line]
-        output = {}
-        with open(
-            os.path.join(directory, "UnicodeData.txt"), encoding="utf-8"
-        ) as data:
-            line = data.readline()
-            while line != "":
-                info = line.rstrip(os.linesep).split(";")
-
-                if int(info[0], 16) in chars:
-                    output[int(info[0], 16)] = info
-
-                line = data.readline()
+        chars = list(line)
 
         table_data = [["character", "byte", "UTF-32", "name", "glyph"]]
 
         byte = 0
         for point in chars:
-            info = output.get(point, None)
-
-            if info is None:
-                num = point
-                name = "CHARACTER NOT IN UNICODE 10.0.0"
-            else:
-                num = point
-                name = info[1]
-                if name == "<control>":
-                    name = info[10]
+            num = ord(point)
 
             # https://en.wikipedia.org/wiki/UTF-8#Description
             if num >= 0x10000:
@@ -65,14 +45,14 @@ def main():
                 point_length = 1
 
             utf32 = hex(num)[2:].upper().zfill(8)
-            glyph = chr(num)
+            glyph = point
 
             table_data.append(
                 [
-                    hex(point)[2:].upper().zfill(point_length * 2),
+                    hex(num)[2:].upper().zfill(point_length * 2),
                     str(byte),
                     utf32,
-                    name,
+                    ud.name(point, "UNKNOWN"),
                     glyph,
                 ]
             )

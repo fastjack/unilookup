@@ -65,10 +65,5 @@ def main():
         print(table.table)
 
 
-try:
+if __name__ == "__main__":
     main()
-except KeyboardInterrupt:
-    try:
-        sys.exit(0)
-    except SystemExit:
-        os._exit(0)

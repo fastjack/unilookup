@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 # (C) Mia Nordentoft 2016-2018
+# (C) Martin Maciaszek 2024
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

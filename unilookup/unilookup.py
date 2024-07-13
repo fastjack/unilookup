@@ -18,7 +18,7 @@
 
 import os
 import sys
-import unicodedata as ud
+import unicodedata2 as ud
 from terminaltables import AsciiTable
 
 directory = os.path.dirname(os.path.realpath(__file__))

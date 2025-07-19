@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "unilookup"
-version = "0.1.1"
+version = "0.2.0"
 description = "A simple CLI Python utility for looking up unicode codepoints"
 authors = ["Martin Maciaszek <martin@maciaszek.net>"]
 license = "GPL-3.0-or-later"

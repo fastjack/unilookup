@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import argparse
 import os
 import sys
 import unicodedata2 as ud
@@ -24,46 +25,58 @@ from terminaltables import AsciiTable
 directory = os.path.dirname(os.path.realpath(__file__))
 
 
+def process_text(text):
+    chars = list(text)
+    
+    table_data = [["character", "byte", "UTF-32", "name", "glyph"]]
+    
+    byte = 0
+    for point in chars:
+        num = ord(point)
+        
+        # https://en.wikipedia.org/wiki/UTF-8#Description
+        if num >= 0x10000:
+            point_length = 4
+        elif num >= 0x800:
+            point_length = 3
+        elif num >= 0x80:
+            point_length = 2
+        else:
+            point_length = 1
+        
+        utf32 = hex(num)[2:].upper().zfill(8)
+        glyph = point
+        
+        table_data.append(
+            [
+                hex(num)[2:].upper().zfill(point_length * 2),
+                str(byte),
+                utf32,
+                ud.name(point, "UNKNOWN"),
+                glyph,
+            ]
+        )
+        
+        byte += point_length
+    
+    table = AsciiTable(table_data)
+    table.inner_column_border = False
+    table.outer_border = False
+    print(table.table)
+
+
 def main():
-    # Read input
-    for line in sys.stdin:
-        chars = list(line)
-
-        table_data = [["character", "byte", "UTF-32", "name", "glyph"]]
-
-        byte = 0
-        for point in chars:
-            num = ord(point)
-
-            # https://en.wikipedia.org/wiki/UTF-8#Description
-            if num >= 0x10000:
-                point_length = 4
-            elif num >= 0x800:
-                point_length = 3
-            elif num >= 0x80:
-                point_length = 2
-            else:
-                point_length = 1
-
-            utf32 = hex(num)[2:].upper().zfill(8)
-            glyph = point
-
-            table_data.append(
-                [
-                    hex(num)[2:].upper().zfill(point_length * 2),
-                    str(byte),
-                    utf32,
-                    ud.name(point, "UNKNOWN"),
-                    glyph,
-                ]
-            )
-
-            byte += point_length
-
-        table = AsciiTable(table_data)
-        table.inner_column_border = False
-        table.outer_border = False
-        print(table.table)
+    parser = argparse.ArgumentParser(description='Look up Unicode codepoints for characters')
+    parser.add_argument('text', nargs='?', help='Text to analyze (if not provided, reads from stdin)')
+    
+    args = parser.parse_args()
+    
+    if args.text:
+        process_text(args.text)
+    else:
+        # Read input from stdin
+        for line in sys.stdin:
+            process_text(line)
 
 
 if __name__ == "__main__":
